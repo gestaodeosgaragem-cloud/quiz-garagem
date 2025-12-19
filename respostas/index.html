@@ -105,11 +105,20 @@
     <!-- Import questions from main script to cross-reference -->
     <script src="../script.js"></script>
     <script>
-        // Override start functionality since we just want the questions array
         document.addEventListener('DOMContentLoaded', () => {
-            const leads = JSON.parse(localStorage.getItem('garage_leads') || '[]');
-            renderList(leads);
+            loadLeads();
         });
+
+        async function loadLeads() {
+            try {
+                const response = await fetch('/api/leads');
+                const leads = await response.json();
+                renderList(leads);
+            } catch (e) {
+                console.error('Erro ao carregar leads:', e);
+                document.getElementById('list-view').innerHTML = '<p>Erro ao carregar respostas. Verifique se o projeto está deployado no Vercel.</p>';
+            }
+        }
 
         function renderList(leads) {
             const container = document.getElementById('list-view');

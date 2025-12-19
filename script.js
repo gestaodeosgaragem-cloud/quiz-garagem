@@ -214,10 +214,16 @@ async function submitQuiz(userData) {
         data_preenchimento: new Date().toISOString()
     };
 
-    // Save to localStorage (works on static hosting like Vercel/GitHub Pages)
-    const existingLeads = JSON.parse(localStorage.getItem('garage_leads') || '[]');
-    existingLeads.push(payload);
-    localStorage.setItem('garage_leads', JSON.stringify(existingLeads));
+    // Save to centralized database via Vercel Function
+    try {
+        await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (e) {
+        console.error('Erro ao salvar no banco:', e);
+    }
 
     // Send to Webhook (Garagem)
     try {
@@ -234,6 +240,6 @@ async function submitQuiz(userData) {
         }
     } catch (error) {
         console.error('Erro webhook:', error);
-        alert('Respostas salvas localmente!');
+        alert('Respostas salvas!');
     }
 }
