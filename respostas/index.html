@@ -134,6 +134,11 @@ git push origin main
                 let leads = JSON.parse(text);
                 console.log('Leads parseados:', leads);
 
+                // Extract jdoc from n8n response format
+                if (Array.isArray(leads) && leads.length > 0 && leads[0].jdoc) {
+                    leads = leads.map(item => item.jdoc);
+                }
+
                 // Handle if response is wrapped or direct array
                 if (!Array.isArray(leads)) {
                     leads = leads.data || leads.records || [];
