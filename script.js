@@ -214,18 +214,7 @@ async function submitQuiz(userData) {
         data_preenchimento: new Date().toISOString()
     };
 
-    // Save to Vercel serverless function
-    try {
-        await fetch('/api/leads', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-    } catch (e) {
-        console.error('Erro ao salvar:', e);
-    }
-
-    // Send to Webhook (Garagem)
+    // Send to Webhook (Garagem) - This is the source of truth
     try {
         const response = await fetch(webhookUrl, {
             method: 'POST',
@@ -240,6 +229,6 @@ async function submitQuiz(userData) {
         }
     } catch (error) {
         console.error('Erro webhook:', error);
-        alert('Respostas salvas!');
+        alert('Erro ao enviar. Tente novamente.');
     }
 }

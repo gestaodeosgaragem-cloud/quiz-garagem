@@ -1,16 +1,27 @@
 # Quiz Garagem
 
-## Deploy no Vercel
+Quiz de Lógica para processo seletivo da Garagem.
+
+## 🚀 Deploy
 
 1. Push para o GitHub
-2. Importe no Vercel
-3. Deploy automático
-4. **PRONTO!** Não precisa configurar nada.
+2. Deploy no Vercel/GitHub Pages
+3. Pronto!
 
-## Funcionamento
+## 📊 Armazenamento
 
-- `/api/leads.js` - Serverless function que salva em `/tmp/leads.json`
-- Funciona automaticamente no Vercel
-- Painel `/respostas/` mostra TODAS as respostas
+- **Envio**: `https://webhook.garagem.dev.br/webhook/ffe16338-8f37-455b-b9d0-f77f9b8c3b65`
+- **Consulta**: `https://webhook.garagem.dev.br/webhook/busca-quiz`
+- Armazenamento permanente no servidor Garagem (PostgreSQL)
 
-> **Nota**: Os dados em `/tmp` são efêmeros (resetam a cada deploy), mas funcionam perfeitamente para demonstração. Para produção, use Vercel KV ou outro banco.
+## ✨ Funcionalidades
+
+- 15 perguntas (10 múltipla escolha + 5 dissertativas)
+- Sistema de pontuação
+- Painel administrativo (`/respostas/`) com todas as respostas
+- Easter egg no console 🐰
+
+## 🎯 Acesso
+
+- **Quiz**: `/index.html`
+- **Admin**: `/respostas/index.html`
