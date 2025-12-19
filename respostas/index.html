@@ -105,18 +105,24 @@
     <!-- Import questions from main script to cross-reference -->
     <script src="../script.js"></script>
     <script>
+        const JSONBIN_BIN_ID = '67647a3ead19ca34f8d6c8e7';
+        const JSONBIN_API_KEY = '$2a$10$VqE8xYvH5L.rH8YqKp0fWOqKp0fWOqKp0fWOqKp0fWOqKp0fWO';
+
         document.addEventListener('DOMContentLoaded', () => {
             loadLeads();
         });
 
         async function loadLeads() {
             try {
-                const response = await fetch('/api/leads');
-                const leads = await response.json();
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                    headers: { 'X-Access-Key': JSONBIN_API_KEY }
+                });
+                const data = await response.json();
+                const leads = data.record || [];
                 renderList(leads);
             } catch (e) {
                 console.error('Erro ao carregar leads:', e);
-                document.getElementById('list-view').innerHTML = '<p>Erro ao carregar respostas. Verifique se o projeto está deployado no Vercel.</p>';
+                document.getElementById('list-view').innerHTML = '<p>Erro ao carregar respostas. Tente novamente.</p>';
             }
         }
 
