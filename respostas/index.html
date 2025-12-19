@@ -119,7 +119,11 @@ git push origin main
             try {
                 console.log('Buscando leads de: https://webhook.garagem.dev.br/webhook/busca-quiz');
 
-                const response = await fetch('https://webhook.garagem.dev.br/webhook/busca-quiz');
+                const response = await fetch('https://webhook.garagem.dev.br/webhook/busca-quiz', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
 
                 console.log('Status da resposta:', response.status);
                 console.log('Headers:', response.headers);
