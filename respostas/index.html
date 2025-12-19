@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respostas - Quiz Garagem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #admin-app {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .candidate-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .candidate-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .candidate-card:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .candidate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-badge {
+            background-color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .details-view {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .correct {
+            border-left: 4px solid #00c853;
+        }
+
+        .incorrect {
+            border-left: 4px solid #d50000;
+        }
+
+        .neutral {
+            border-left: 4px solid #888;
+        }
+
+        .answer-label {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .user-answer {
+            font-weight: bold;
+        }
+
+        .correct-answer {
+            color: #00c853;
+            font-size: 0.9rem;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="admin-app">
+        <h1>Respostas Recebidas</h1>
+        <div id="list-view" class="candidate-list"></div>
+        <div id="detail-view" class="hidden">
+            <button onclick="showList()" style="width: auto; margin-bottom: 20px;">&larr; Voltar</button>
+            <div id="detail-content"></div>
+        </div>
+    </div>
+
+    <!-- Import questions from main script to cross-reference -->
+    <script src="../script.js"></script>
+    <script>
+        // Override start functionality since we just want the questions array
+        document.addEventListener('DOMContentLoaded', () => {
+            // We just need 'questions' array from script.js, we don't want to run the quiz
+            const leads = JSON.parse(localStorage.getItem('garage_leads') || '[]');
+            renderList(leads);
+        });
+
+        function renderList(leads) {
+            const container = document.getElementById('list-view');
+            container.innerHTML = '';
+
+            if (leads.length === 0) {
+                container.innerHTML = '<p>Nenhuma resposta encontrada.</p>';
+                return;
+            }
+
+            leads.slice().reverse().forEach((lead, index) => {
+                // index in original array is (leads.length - 1 - index) if specific ID needed, 
+                // but we can just pass the object
+                const div = document.createElement('div');
+                div.className = 'candidate-card';
+                div.onclick = () => showDetail(lead);
+                div.innerHTML = `
+                    <div class="candidate-header">
+                        <h3>${lead.nomeCandidato || 'Sem Nome'}</h3>
+                        <span class="score-badge">${lead.pontuacaoTotal} pts</span>
+                    </div>
+                    <p style="color: #aaa; font-size: 0.9rem;">${new Date(lead.data_preenchimento).toLocaleString()}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function showDetail(lead) {
+            document.getElementById('list-view').classList.add('hidden');
+            document.getElementById('detail-view').classList.remove('hidden');
+            const container = document.getElementById('detail-content');
+
+            let html = `
+                <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                    <h2>${lead.nomeCandidato}</h2>
+                    <p><strong>Email:</strong> ${lead.emailCandidato}</p>
+                    <p><strong>WhatsApp:</strong> ${lead.whatsappCandidato}</p>
+                    <p><strong>Pontuação:</strong> ${lead.pontuacaoTotal}</p>
+                    <p><strong>Aceite:</strong> ${lead.aceiteGaragem ? 'Sim' : 'Não'}</p>
+                </div>
+                <h3>Respostas</h3>
+            `;
+
+            questions.forEach((q, idx) => {
+                const answer = lead.respostas[idx];
+                let statusClass = 'neutral';
+                let answerText = '';
+
+                if (q.type === 'mc') {
+                    const isCorrect = answer === q.correct;
+                    statusClass = isCorrect ? 'correct' : 'incorrect';
+                    answerText = `<span class="user-answer" style="color: ${isCorrect ? '#00c853' : '#d50000'}">${q.options[answer] || 'Sem resposta'}</span>`;
+                    if (!isCorrect) {
+                        answerText += `<div class="correct-answer">Correta: ${q.options[q.correct]}</div>`;
+                    }
+                } else {
+                    answerText = `<p class="user-answer" style="white-space: pre-wrap;">${answer || 'Sem resposta'}</p>`;
+                }
+
+                html += `
+                    <div class="question-result ${statusClass}">
+                        <p style="font-weight: 600; margin-bottom: 5px;">${idx + 1}. ${q.text}</p>
+                        <div class="answer-label">Resposta:</div>
+                        ${answerText}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function showList() {
+            document.getElementById('detail-view').classList.add('hidden');
+            document.getElementById('list-view').classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>
