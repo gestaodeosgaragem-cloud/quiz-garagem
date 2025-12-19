@@ -1,7 +1,4 @@
-$ git add .
-git commit -m "Final implementation"
-git push origin main
-
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -56,6 +53,8 @@ git push origin main
             margin-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .question-result {
@@ -192,6 +191,7 @@ git push origin main
         function showDetail(lead) {
             document.getElementById('list-view').classList.add('hidden');
             document.getElementById('detail-view').classList.remove('hidden');
+            window.scrollTo(0, 0); // Scroll to top
             const container = document.getElementById('detail-content');
 
             let html = `
