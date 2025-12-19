@@ -1,4 +1,6 @@
 node_modules/
-leads.json
+data/
 *.log
 .DS_Store
+.vercel
+.env*.local
