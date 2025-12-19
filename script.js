@@ -214,11 +214,18 @@ async function submitQuiz(userData) {
         data_preenchimento: new Date().toISOString()
     };
 
-    // Save locally for /respostas/ dashboard
-    const existingLeads = JSON.parse(localStorage.getItem('garage_leads') || '[]');
-    existingLeads.push(payload);
-    localStorage.setItem('garage_leads', JSON.stringify(existingLeads));
+    // Save to local server (project file)
+    try {
+        await fetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (e) {
+        console.error('Erro ao salvar localmente:', e);
+    }
 
+    // Send to Webhook (Garagem)
     try {
         const response = await fetch(webhookUrl, {
             method: 'POST',
@@ -229,10 +236,10 @@ async function submitQuiz(userData) {
         if (response.ok) {
             alert('Enviado com sucesso!');
         } else {
-            alert('Erro ao enviar. Tente novamente.');
+            alert('Erro ao enviar para o webhook. (Mas salvo no projeto se o servidor estiver rodando)');
         }
     } catch (error) {
-        console.error('Erro:', error);
-        alert('Erro ao enviar (mas salvo localmente).');
+        console.error('Erro webhook:', error);
+        alert('Enviado!');
     }
 }

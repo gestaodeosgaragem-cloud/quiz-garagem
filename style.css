@@ -249,3 +249,58 @@ button:hover {
 .form-group button:hover {
     background: linear-gradient(135deg, var(--primary-hover) 0%, #800020 100%);
 }
+
+/* Intro Screen */
+.intro {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem 0;
+}
+
+.intro h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}
+
+.intro h1 span {
+    font-size: 3rem;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.intro p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 400px;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.intro button {
+    max-width: 250px;
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 10px 40px rgba(128, 0, 32, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(128, 0, 32, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(128, 0, 32, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(128, 0, 32, 0);
+    }
+}

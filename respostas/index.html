@@ -107,10 +107,19 @@
     <script>
         // Override start functionality since we just want the questions array
         document.addEventListener('DOMContentLoaded', () => {
-            // We just need 'questions' array from script.js, we don't want to run the quiz
-            const leads = JSON.parse(localStorage.getItem('garage_leads') || '[]');
-            renderList(leads);
+            loadLeads();
         });
+
+        async function loadLeads() {
+            try {
+                const response = await fetch('/api/leads');
+                const leads = await response.json();
+                renderList(leads);
+            } catch (e) {
+                document.getElementById('list-view').innerHTML = '<p>Erro ao carregar leads. Certifique-se de iniciar o servidor (node server.js).</p>';
+                console.error(e);
+            }
+        }
 
         function renderList(leads) {
             const container = document.getElementById('list-view');
