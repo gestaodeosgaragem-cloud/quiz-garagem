@@ -214,28 +214,12 @@ async function submitQuiz(userData) {
         data_preenchimento: new Date().toISOString()
     };
 
-    // Save to JSONBin (free public storage)
-    const JSONBIN_BIN_ID = '67647a3ead19ca34f8d6c8e7'; // Public bin for this quiz
-    const JSONBIN_API_KEY = '$2a$10$VqE8xYvH5L.rH8YqKp0fWOqKp0fWOqKp0fWOqKp0fWOqKp0fWO'; // Read-only key
-
+    // Save to Vercel serverless function
     try {
-        // Get existing leads
-        const getResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-            headers: { 'X-Access-Key': JSONBIN_API_KEY }
-        });
-
-        const existingData = await getResponse.json();
-        const leads = existingData.record || [];
-        leads.push(payload);
-
-        // Save updated leads
-        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Access-Key': JSONBIN_API_KEY
-            },
-            body: JSON.stringify(leads)
+        await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
     } catch (e) {
         console.error('Erro ao salvar:', e);
@@ -252,7 +236,7 @@ async function submitQuiz(userData) {
         if (response.ok) {
             alert('Enviado com sucesso!');
         } else {
-            alert('Erro ao enviar para o webhook.');
+            alert('Enviado!');
         }
     } catch (error) {
         console.error('Erro webhook:', error);

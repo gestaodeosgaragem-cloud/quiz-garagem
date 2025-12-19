@@ -1,34 +1,16 @@
 # Quiz Garagem
 
-Quiz de Lógica para processo seletivo da Garagem.
+## Deploy no Vercel
 
-## 🚀 Deploy Instantâneo
+1. Push para o GitHub
+2. Importe no Vercel
+3. Deploy automático
+4. **PRONTO!** Não precisa configurar nada.
 
-Este projeto funciona **imediatamente** no Vercel/GitHub Pages sem nenhuma configuração adicional!
+## Funcionamento
 
-Usa **JSONBin.io** como backend gratuito - tudo já está configurado.
+- `/api/leads.js` - Serverless function que salva em `/tmp/leads.json`
+- Funciona automaticamente no Vercel
+- Painel `/respostas/` mostra TODAS as respostas
 
-### Deploy:
-1. Faça push para o GitHub
-2. Conecte no Vercel ou GitHub Pages
-3. Pronto! ✨
-
-## 📁 Estrutura
-
-- `/index.html` - Quiz principal
-- `/respostas/index.html` - Painel administrativo (mostra TODAS as respostas)
-- `/script.js` - Lógica do quiz
-- `/style.css` - Estilos
-
-## ✨ Funcionalidades
-
-- 15 perguntas (10 múltipla escolha + 5 dissertativas)
-- Sistema de pontuação
-- **Painel administrativo com TODAS as respostas de TODOS os usuários**
-- Envio para webhook do Garagem
-- Easter egg no console 🐰
-
-## 🔧 Backend
-
-Usa JSONBin.io (serviço gratuito) para armazenar respostas centralmente.
-Não requer configuração - já está tudo pronto!
+> **Nota**: Os dados em `/tmp` são efêmeros (resetam a cada deploy), mas funcionam perfeitamente para demonstração. Para produção, use Vercel KV ou outro banco.

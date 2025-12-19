@@ -1,4 +1,14 @@
-import { kv } from '@vercel/kv';
+import fs from 'fs';
+import path from 'path';
+
+const DATA_FILE = '/tmp/leads.json';
+
+// Ensure file exists
+function ensureFile() {
+    if (!fs.existsSync(DATA_FILE)) {
+        fs.writeFileSync(DATA_FILE, '[]');
+    }
+}
 
 export default async function handler(req, res) {
     // Enable CORS
@@ -10,36 +20,27 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
+    ensureFile();
+
     if (req.method === 'POST') {
         try {
             const lead = req.body;
-            const timestamp = Date.now();
-            const key = `lead:${timestamp}`;
+            const data = fs.readFileSync(DATA_FILE, 'utf8');
+            const leads = JSON.parse(data || '[]');
+            leads.push(lead);
+            fs.writeFileSync(DATA_FILE, JSON.stringify(leads, null, 2));
 
-            // Store in Vercel KV
-            await kv.set(key, JSON.stringify(lead));
-
-            return res.status(200).json({ success: true, id: key });
+            return res.status(200).json({ success: true });
         } catch (error) {
             console.error('Error saving lead:', error);
-            return res.status(500).json({ error: 'Failed to save lead', details: error.message });
+            return res.status(500).json({ error: 'Failed to save', details: error.message });
         }
     }
 
     if (req.method === 'GET') {
         try {
-            // Get all keys matching pattern
-            const keys = await kv.keys('lead:*');
-            const leads = [];
-
-            // Fetch all leads
-            for (const key of keys) {
-                const data = await kv.get(key);
-                if (data) {
-                    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-                    leads.push(parsed);
-                }
-            }
+            const data = fs.readFileSync(DATA_FILE, 'utf8');
+            const leads = JSON.parse(data || '[]');
 
             // Sort by timestamp (newest first)
             leads.sort((a, b) => new Date(b.data_preenchimento) - new Date(a.data_preenchimento));
@@ -47,7 +48,7 @@ export default async function handler(req, res) {
             return res.status(200).json(leads);
         } catch (error) {
             console.error('Error fetching leads:', error);
-            return res.status(500).json({ error: 'Failed to fetch leads', details: error.message });
+            return res.status(200).json([]); // Return empty array if file doesn't exist yet
         }
     }
 
